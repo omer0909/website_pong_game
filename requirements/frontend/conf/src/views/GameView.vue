@@ -98,6 +98,7 @@ export default defineComponent({
       image_url: process.env.VUE_APP_BACKEND_URL + "/files/file/",
 
       eventCreated: false,
+      inProcess: false,
     }
   },
 
@@ -272,9 +273,6 @@ export default defineComponent({
       var imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       var data = imageData.data;
 
-      //clear canvas cache
-      context.clearRect(0, 0, canvas.width, canvas.height);
-
       //red effect
       for (let y = 0; y < canvas.height; y++) {
         for (let x = 30; x < canvas.width - 30; x++) {
@@ -323,6 +321,9 @@ export default defineComponent({
       context.putImageData(imageData, 0, 0);
     },
     Render(data: any) {
+      if (this.inProcess)
+        return;
+      this.inProcess = true;
       const color = "white"
 
       this.gameStarted = true;
@@ -397,6 +398,7 @@ export default defineComponent({
       context.fillStyle = color;
       context.fillText("Health: " + lastUserHealth, 400 + 200 - 30, 25);
 
+      this.inProcess = false;
     },
     DrawInfo(text = "Waiting Players", color = "white") {
       var canvas: any = this.$refs['canvas']
